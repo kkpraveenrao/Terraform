@@ -2,16 +2,19 @@ name: Github Action Workflow for Terraform CI/CD to AWS Cloud
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   terraform:
     name: 'Deploy'
     runs-on: self-hosted
+    environment: production
+
+    defaults: 
+      run:
+        working-directory: terraform
 
     env:
       AWS_REGION: 'us-east-1'
