@@ -14,9 +14,9 @@ jobs:
     runs-on: self-hosted
     environment: production  # still requires environment approval
 
-    defaults:
-      run:
-        working-directory: terraform  # adjust if your .tf files are somewhere else
+   # defaults:
+    #  run:
+     #   working-directory: terraform  # adjust if your .tf files are somewhere else
 
     steps:
       - name: Checkout repository
