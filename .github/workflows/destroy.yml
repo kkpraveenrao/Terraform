@@ -1,18 +1,10 @@
 name: Terraform Destroy with Confirmation
 
 on:
-  workflow_dispatch:
-    inputs:
-      confirm:
-        description: 'Type "yes" to confirm destruction of all resources'
-        required: true
-        default: 'no'
   push:
     branches: [main]
     paths-ignore:
       - '.github/workflows/terraform-destroy.yml'
-
-
 jobs:
   destroy:
     name: Terraform Destroy
@@ -31,13 +23,6 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.14.3
-
-      - name: Check confirmation input
-        run: |
-          if [ "${{ github.event.inputs.confirm }}" != "yes" ]; then
-            echo "Destroy not confirmed. Exiting."
-            exit 1
-          fi
 
       - name: Terraform Init
         run: terraform init
