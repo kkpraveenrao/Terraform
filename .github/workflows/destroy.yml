@@ -1,0 +1,44 @@
+name: Terraform Destroy with Confirmation
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "yes" to confirm destruction of all resources'
+        required: true
+        default: 'no'
+
+jobs:
+  destroy:
+    name: Terraform Destroy
+    runs-on: self-hosted
+    environment: production  # still requires environment approval
+
+    defaults:
+      run:
+        working-directory: terraform  # adjust if your .tf files are somewhere else
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.3
+
+      - name: Check confirmation input
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "yes" ]; then
+            echo "Destroy not confirmed. Exiting."
+            exit 1
+          fi
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan Destroy
+        run: terraform plan -destroy -out=tfplan.destroy
+
+      - name: Terraform Destroy
+        run: terraform apply -auto-approve tfplan.destroy
