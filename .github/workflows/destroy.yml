@@ -7,6 +7,11 @@ on:
         description: 'Type "yes" to confirm destruction of all resources'
         required: true
         default: 'no'
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.github/workflows/terraform-destroy.yml'
+
 
 jobs:
   destroy:
