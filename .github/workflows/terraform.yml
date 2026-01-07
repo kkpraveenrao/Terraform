@@ -27,8 +27,8 @@ jobs:
     - name: 'Terraform Init'
       run: terraform init
 
-    - name: 'Terraform Format'
-      run: terraform fmt
+    - name: 'Terraform Format check'
+      run: terraform fmt -check
 
     - name: 'Terraform Validate'
       run: terraform validate
@@ -37,5 +37,5 @@ jobs:
       run: terraform plan -out=tfplan
 
     - name: 'Terraform Apply'
-      if: github.ref == 'refs/heads/main'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: terraform apply -auto-approve tfplan
