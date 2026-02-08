@@ -30,6 +30,11 @@ jobs:
         run: aws sts get-caller-identity
 
       # Runs a set of commands using the runners shell
-      - name: sync repo to s3
-        run: |
-          aws s3 sync . s3://recons3 --exclude ".git/*" --exclude ".github/*" --exclude "*.env"
+      - name: Preview S3 sync (PR only)
+        if: github.event_name == 'pull_request'
+        run: aws s3 sync . s3://recons3 --dryrun --exclude ".git/*" --exclude ".github/*" --exclude "*.env"
+
+      - name: Sync to S3 (main only)
+        if: github.event_name == 'push'
+        run: aws s3 sync . s3://recons3 --exclude ".git/*" --exclude ".github/*" --exclude "*.env"
+
