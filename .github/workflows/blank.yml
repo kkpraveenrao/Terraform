@@ -27,7 +27,7 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Verify AWS Identity
-        run: aws sts get caller-identity
+        run: aws sts get-caller-identity
 
       # Runs a set of commands using the runners shell
       - name: sync repo to s3
