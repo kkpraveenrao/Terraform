@@ -22,13 +22,13 @@ jobs:
 
       # 2️⃣ Fetch main branch for comparison
       - name: Fetch main branch
-        shell: pwsh
+        shell: powershell
         run: git fetch origin main
 
       # 3️⃣ Detect Terraform changes using Git
       - name: Detect Terraform changes
         id: detect
-        shell: pwsh
+        shell: powershell
         run: |
           # Get list of changed files between current branch and main
           $changedFiles = git diff --name-only origin/main...HEAD
@@ -66,16 +66,16 @@ jobs:
             Expand-Archive "$env:TEMP\terraform.zip" -DestinationPath "$env:ProgramFiles\Terraform"
             setx PATH "$env:ProgramFiles\Terraform;$env:PATH"
           }
-        shell: pwsh
+        shell: powershell
 
       - name: Terraform Init
         run: terraform init -backend=false
-        shell: pwsh
+        shell: powershell
 
       - name: Terraform Format Check
         run: terraform fmt -check
-        shell: pwsh
+        shell: powershell
 
       - name: Terraform Validate
         run: terraform validate -no-color
-        shell: pwsh
+        shell: powershell
