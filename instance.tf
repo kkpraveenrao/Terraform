@@ -99,5 +99,4 @@ catch {
 </powershell>
 
             EOF
-
 }
