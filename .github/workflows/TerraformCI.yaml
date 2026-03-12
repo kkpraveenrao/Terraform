@@ -11,30 +11,42 @@ jobs:
     name: Detect Terraform Changes
     runs-on: [self-hosted, windows]
     outputs:
-      terraform_changed: ${{ steps.filter.outputs.terraform }}
+      terraform_changed: ${{ steps.detect.outputs.terraform_changed }}
 
     steps:
-      - uses: actions/checkout@v5
+      # 1️⃣ Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
+      # 2️⃣ Fetch main branch for comparison
       - name: Fetch main branch
+        shell: pwsh
         run: git fetch origin main
 
+      # 3️⃣ Detect Terraform changes using Git
       - name: Detect Terraform changes
-        id: filter
-        uses: dorny/paths-filter@v3
-        with:
-          base: origin/main
-          filters: |
-            terraform:
-              - '**/*.tf'
-              - '**/*.tfvars'
-              - '.terraform.lock.hcl'
-
-      - name: Show results
+        id: detect
+        shell: pwsh
         run: |
-          echo Terraform files changed: ${{ steps.filter.outputs.terraform }}
+          # Get list of changed files between current branch and main
+          $changedFiles = git diff --name-only origin/main...HEAD
+
+          # Filter only Terraform files
+          $tfChanged = $changedFiles | Where-Object { $_ -like "*.tf" -or $_ -like "*.tfvars" -or $_ -eq ".terraform.lock.hcl" }
+
+          if ($tfChanged) {
+              echo "terraform_changed=true" >> $env:GITHUB_OUTPUT
+              Write-Host "Changed Terraform files:`n$tfChanged"
+          } else {
+              echo "terraform_changed=false" >> $env:GITHUB_OUTPUT
+              Write-Host "No Terraform files changed."
+          }
+
+      # 4️⃣ Show result
+      - name: Show result
+        run: echo "Terraform changed? ${{ steps.detect.outputs.terraform_changed }}"
 
   terraform-validate:
     name: Terraform Validate
